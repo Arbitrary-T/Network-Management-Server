@@ -1,6 +1,6 @@
 package db;
 
-import pojo.Network;
+import models.Network;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +31,7 @@ public class NetworkDatabase extends Database
 
     public NetworkDatabase()
     {
+        tableData = new ArrayList<>();
         databaseConnection = loadDatabase("networks", createTableStatement);
         try
         {
@@ -97,22 +98,25 @@ public class NetworkDatabase extends Database
     {
         if(databaseConnection != null)
         {
-            try
+            if(!doesExist(network.getId()))
             {
-                updateData.setInt(1, network.getId());
-                updateData.setInt(2, network.getNodes());
-                updateData.setInt(3, network.getHubs());
-                updateData.setInt(4, network.getSwitches());
-                updateData.setString(5, network.getTopologyStructure());
-                updateData.setString(6, network.getCountryOfOrigin());
-                updateData.setString(7, network.getCurrentStatus());
-                updateData.setInt(8, oldNetworkID);
-                updateData.executeUpdate();
-                return true;
-            }
-            catch (SQLException e)
-            {
-                e.printStackTrace();
+                try
+                {
+                    updateData.setInt(1, network.getId());
+                    updateData.setInt(2, network.getNodes());
+                    updateData.setInt(3, network.getHubs());
+                    updateData.setInt(4, network.getSwitches());
+                    updateData.setString(5, network.getTopologyStructure());
+                    updateData.setString(6, network.getCountryOfOrigin());
+                    updateData.setString(7, network.getCurrentStatus());
+                    updateData.setInt(8, oldNetworkID);
+                    updateData.executeUpdate();
+                    return true;
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
             }
         }
         return false;
@@ -148,6 +152,7 @@ public class NetworkDatabase extends Database
                 while(resultSet.next())
                 {
                     tableData.add(new Network(resultSet.getInt(1), resultSet.getInt(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getString(5), resultSet.getString(6), resultSet.getString(7)));
+                    //System.out.println(new Network(resultSet.getInt(1), resultSet.getInt(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getString(5), resultSet.getString(6), resultSet.getString(7)));
                 }
             }
 

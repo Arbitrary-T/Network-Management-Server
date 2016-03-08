@@ -1,40 +1,78 @@
 package net;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import db.NetworkDatabase;
+import models.Network;
+
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Created by T on 06/03/2016.
  */
-public class Server
+public class Server implements DatabaseListener
 {
-    public static void main(String args[])
+    LinkedList<ClientHandler> clientHandlerLinkedList;
+    Thread clientHandlerThread;
+    static NetworkDatabase networkDatabase;
+    public Server(int serverSocket)
     {
-        Server s = new Server();
-        try {
-            s.run();
-        } catch (Exception e) {
+        clientHandlerLinkedList = new LinkedList<>();
+        networkDatabase = new NetworkDatabase();
+        try
+        {
+            run(serverSocket);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void run(int serverSocketInt) throws Exception
+    {
+        ServerSocket serverSocket = new ServerSocket(serverSocketInt);
+        try
+        {
+            while(true)
+            {
+                Socket socket = serverSocket.accept();
+                ClientHandler temp = new ClientHandler(socket, this);
+                clientHandlerThread = new Thread(temp);
+                clientHandlerThread.start();
+                clientHandlerLinkedList.add(temp);
+            }
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
 
     }
 
-    public void run() throws Exception
+    public static synchronized void addNetwork(Network network)
     {
-        ServerSocket serverSocket = new ServerSocket(13337);
-        Socket socket = serverSocket.accept();
-        InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        networkDatabase.insertNetwork(network);
+    }
 
-        String message = bufferedReader.readLine();
-        System.out.println(message);
-        if(message !=null)
-        {
-            PrintStream printStream = new PrintStream(socket.getOutputStream());
-            printStream.println("messafge rejovj");
-        }
+    public static synchronized void modifyNetwork(Network network, int oldID)
+    {
+        networkDatabase.updateNetwork(network, oldID);
+    }
+
+    public static synchronized void deleteNetwork(int networkID)
+    {
+        networkDatabase.deleteNetwork(networkID);
+    }
+    public static synchronized ArrayList<Network> getNetworks()
+    {
+        return networkDatabase.getData();
+    }
+    @Override
+    public void notifyUpdate()
+    {
+        clientHandlerLinkedList.forEach(ClientHandler::databaseUpdate);
     }
 }
