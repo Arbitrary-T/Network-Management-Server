@@ -30,7 +30,6 @@ public class ClientHandler implements Runnable
         {
             String command;
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            //objectOutputStream.flush();
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             while(true)
             {
@@ -54,13 +53,23 @@ public class ClientHandler implements Runnable
                         break;
                     case "Refresh":
                         objectInputStream.readObject();
-                        agent.notifyUpdate();
+                        databaseUpdate();
+                        break;
                 }
             }
         }
         catch (IOException | ClassNotFoundException e)
         {
+            try
+            {
+                socket.close();
+            }
+            catch (IOException e1)
+            {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
+
         }
     }
 
@@ -69,15 +78,24 @@ public class ClientHandler implements Runnable
         System.out.println("BROADCAST: DATABASE UPDATE EVENT");
         try
         {
-            ArrayList<Network> s = Server.getNetworks();
-            System.out.println(s);
-            objectOutputStream.writeObject(s);
+            ArrayList<Network> loadedDatabase = Server.getNetworks();
+            System.out.println("This is about to be sent: " + loadedDatabase);
+            objectOutputStream.writeInt(loadedDatabase.size());
             objectOutputStream.flush();
+            for(Network network: loadedDatabase)
+            {
+                objectOutputStream.writeObject(network);
+                objectOutputStream.flush();
+            }
         }
         catch (IOException io)
         {
             io.printStackTrace();
         }
+    }
+    public Socket getSocket()
+    {
+        return this.socket;
     }
 
 }

@@ -73,6 +73,16 @@ public class Server implements DatabaseListener
     @Override
     public void notifyUpdate()
     {
-        clientHandlerLinkedList.forEach(ClientHandler::databaseUpdate);
+        for(ClientHandler clientHandler :clientHandlerLinkedList)
+        {
+            if(!clientHandler.getSocket().isClosed())
+            {
+                clientHandler.databaseUpdate();
+            }
+            else
+            {
+                clientHandlerLinkedList.remove(clientHandler);
+            }
+        }
     }
 }
