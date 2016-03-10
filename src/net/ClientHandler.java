@@ -45,12 +45,12 @@ public class ClientHandler implements Runnable
                         Server.deleteNetwork(networkToDelete.getId());
                         agent.notifyUpdate();
                         break;
-                    case "Update":
+                    /*case "Update": ///@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@edit
                         Network updatedNetwork = (Network) objectInputStream.readObject();
                         int oldNetworkID = objectInputStream.readInt();
                         Server.modifyNetwork(updatedNetwork, oldNetworkID);
                         agent.notifyUpdate();
-                        break;
+                        break;*/
                     case "Refresh":
                         objectInputStream.readObject();
                         databaseUpdate();
@@ -63,6 +63,7 @@ public class ClientHandler implements Runnable
             try
             {
                 socket.close();
+                return;
             }
             catch (IOException e1)
             {
@@ -80,6 +81,7 @@ public class ClientHandler implements Runnable
         {
             ArrayList<Network> loadedDatabase = Server.getNetworks();
             System.out.println("This is about to be sent: " + loadedDatabase);
+            objectOutputStream.writeObject("Refresh");
             objectOutputStream.writeInt(loadedDatabase.size());
             objectOutputStream.flush();
             for(Network network: loadedDatabase)

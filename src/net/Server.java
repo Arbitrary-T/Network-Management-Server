@@ -81,6 +81,7 @@ public class Server implements DatabaseListener
             }
             else
             {
+
                 clientHandlerLinkedList.remove(clientHandler);
             }
         }
