@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -57,9 +59,9 @@ public class Server implements DatabaseListener
         networkDatabase.insertNetwork(network);
     }
 
-    public static synchronized void modifyNetwork(Network network, int oldID)
+    public static synchronized void modifyNetwork(Network network)
     {
-        networkDatabase.updateNetwork(network, oldID);
+        networkDatabase.updateNetwork(network);
     }
 
     public static synchronized void deleteNetwork(int networkID)
@@ -70,19 +72,20 @@ public class Server implements DatabaseListener
     {
         return networkDatabase.getData();
     }
+
     @Override
     public void notifyUpdate()
     {
-        for(ClientHandler clientHandler :clientHandlerLinkedList)
+        for(Iterator<ClientHandler> clientHandlerIterator = clientHandlerLinkedList.iterator(); clientHandlerIterator.hasNext();)
         {
+            ClientHandler clientHandler = clientHandlerIterator.next();
             if(!clientHandler.getSocket().isClosed())
             {
                 clientHandler.databaseUpdate();
             }
             else
             {
-
-                clientHandlerLinkedList.remove(clientHandler);
+                clientHandlerIterator.remove();
             }
         }
     }

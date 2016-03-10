@@ -94,11 +94,11 @@ public class NetworkDatabase extends Database
         return false;
     }
 
-    public synchronized boolean updateNetwork(Network network, int oldNetworkID)
+    public synchronized boolean updateNetwork(Network network)
     {
         if(databaseConnection != null)
         {
-            if(!doesExist(network.getId()))
+            if(doesExist(network.getId()))
             {
                 try
                 {
@@ -109,7 +109,7 @@ public class NetworkDatabase extends Database
                     updateData.setString(5, network.getTopologyStructure());
                     updateData.setString(6, network.getCountryOfOrigin());
                     updateData.setString(7, network.getCurrentStatus());
-                    updateData.setInt(8, oldNetworkID);
+                    updateData.setInt(8, network.getId());
                     updateData.executeUpdate();
                     return true;
                 }
@@ -129,10 +129,7 @@ public class NetworkDatabase extends Database
             {
                 doesExist.setInt(1, networkID);
                 ResultSet resultSet = doesExist.executeQuery();
-                if(resultSet.getFetchSize() > 0)
-                {
-                    return true;
-                }
+                return resultSet.next();
             }
             catch (SQLException e)
             {

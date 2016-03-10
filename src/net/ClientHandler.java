@@ -34,7 +34,8 @@ public class ClientHandler implements Runnable
             while(true)
             {
                 command = (String) objectInputStream.readObject();
-                switch (command) {
+                switch (command)
+                {
                     case "Add":
                         Network networkToAdd = (Network) objectInputStream.readObject();
                         Server.addNetwork(networkToAdd);
@@ -45,12 +46,11 @@ public class ClientHandler implements Runnable
                         Server.deleteNetwork(networkToDelete.getId());
                         agent.notifyUpdate();
                         break;
-                    /*case "Update": ///@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@edit
+                    case "Modify":
                         Network updatedNetwork = (Network) objectInputStream.readObject();
-                        int oldNetworkID = objectInputStream.readInt();
-                        Server.modifyNetwork(updatedNetwork, oldNetworkID);
+                        Server.modifyNetwork(updatedNetwork);
                         agent.notifyUpdate();
-                        break;*/
+                        break;
                     case "Refresh":
                         objectInputStream.readObject();
                         databaseUpdate();
@@ -76,11 +76,9 @@ public class ClientHandler implements Runnable
 
     public void databaseUpdate()
     {
-        System.out.println("BROADCAST: DATABASE UPDATE EVENT");
         try
         {
             ArrayList<Network> loadedDatabase = Server.getNetworks();
-            System.out.println("This is about to be sent: " + loadedDatabase);
             objectOutputStream.writeObject("Refresh");
             objectOutputStream.writeInt(loadedDatabase.size());
             objectOutputStream.flush();
@@ -92,9 +90,18 @@ public class ClientHandler implements Runnable
         }
         catch (IOException io)
         {
+            try
+            {
+                this.socket.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
             io.printStackTrace();
         }
     }
+
     public Socket getSocket()
     {
         return this.socket;
