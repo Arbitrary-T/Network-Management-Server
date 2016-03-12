@@ -62,7 +62,10 @@ public class ClientHandler implements Runnable
         {
             try
             {
-                socket.close();
+                if(socket != null)
+                {
+                    socket.close();
+                }
                 return;
             }
             catch (IOException e1)
