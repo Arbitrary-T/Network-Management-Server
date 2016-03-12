@@ -7,6 +7,6 @@ public class Entry
 {
     public static void main(String args[])
     {
-        Server server = new Server(13337);
+       Server server = new Server(13337);
     }
 }

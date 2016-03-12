@@ -58,15 +58,18 @@ public class NetworkDatabase extends Database
         {
             try
             {
-                insertData.setInt(1, network.getId());
-                insertData.setInt(2, network.getNodes());
-                insertData.setInt(3, network.getHubs());
-                insertData.setInt(4, network.getSwitches());
-                insertData.setString(5, network.getTopologyStructure());
-                insertData.setString(6, network.getCountryOfOrigin());
-                insertData.setString(7, network.getCurrentStatus());
-                insertData.executeUpdate();
-                return true;
+                if(!doesExist(network.getId()))
+                {
+                    insertData.setInt(1, network.getId());
+                    insertData.setInt(2, network.getNodes());
+                    insertData.setInt(3, network.getHubs());
+                    insertData.setInt(4, network.getSwitches());
+                    insertData.setString(5, network.getTopologyStructure());
+                    insertData.setString(6, network.getCountryOfOrigin());
+                    insertData.setString(7, network.getCurrentStatus());
+                    insertData.executeUpdate();
+                    return true;
+                }
             }
             catch (SQLException e)
             {
