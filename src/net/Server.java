@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -16,9 +15,9 @@ import java.util.LinkedList;
  */
 public class Server implements DatabaseListener
 {
-    LinkedList<ClientHandler> clientHandlerLinkedList;
-    Thread clientHandlerThread;
-    static NetworkDatabase networkDatabase;
+    private LinkedList<ClientHandler> clientHandlerLinkedList;
+    private static NetworkDatabase networkDatabase;
+
     public Server(int serverSocket)
     {
         clientHandlerLinkedList = new LinkedList<>();
@@ -42,7 +41,8 @@ public class Server implements DatabaseListener
             {
                 Socket socket = serverSocket.accept();
                 ClientHandler temp = new ClientHandler(socket, this);
-                clientHandlerThread = new Thread(temp);
+                Thread clientHandlerThread = new Thread(temp);
+                clientHandlerThread.setDaemon(true);
                 clientHandlerThread.start();
                 clientHandlerLinkedList.add(temp);
             }
