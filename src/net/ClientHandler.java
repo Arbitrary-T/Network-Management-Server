@@ -1,5 +1,6 @@
 package net;
 
+import db.NetworkDatabase;
 import models.Network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,10 +17,12 @@ public class ClientHandler implements Runnable
     private DatabaseListener agent;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private NetworkDatabase networkDatabase;
 
-    public ClientHandler(Socket socket, DatabaseListener mainAgent)
+    public ClientHandler(Socket socket, NetworkDatabase networkDatabase, DatabaseListener mainAgent)
     {
         this.socket = socket;
+        this.networkDatabase = networkDatabase;
         this.agent = mainAgent;
     }
 
@@ -38,17 +41,17 @@ public class ClientHandler implements Runnable
                 {
                     case "Add":
                         Network networkToAdd = (Network) objectInputStream.readObject();
-                        Server.addNetwork(networkToAdd);
+                        networkDatabase.insertNetwork(networkToAdd);
                         agent.notifyUpdate();
                         break;
                     case "Delete":
                         Network networkToDelete = (Network) objectInputStream.readObject();
-                        Server.deleteNetwork(networkToDelete.getId());
+                        networkDatabase.deleteNetwork(networkToDelete.getId());
                         agent.notifyUpdate();
                         break;
                     case "Modify":
                         Network updatedNetwork = (Network) objectInputStream.readObject();
-                        Server.modifyNetwork(updatedNetwork);
+                        networkDatabase.updateNetwork(updatedNetwork);
                         agent.notifyUpdate();
                         break;
                     case "Refresh":
@@ -81,7 +84,7 @@ public class ClientHandler implements Runnable
     {
         try
         {
-            ArrayList<Network> loadedDatabase = Server.getNetworks();
+            ArrayList<Network> loadedDatabase = networkDatabase.getData();
             objectOutputStream.writeObject("Refresh");
             objectOutputStream.writeInt(loadedDatabase.size());
             objectOutputStream.flush();

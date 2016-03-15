@@ -16,7 +16,7 @@ import java.util.LinkedList;
 public class Server implements DatabaseListener
 {
     private LinkedList<ClientHandler> clientHandlerLinkedList;
-    private static NetworkDatabase networkDatabase;
+    private NetworkDatabase networkDatabase;
 
     public Server(int serverSocket)
     {
@@ -40,7 +40,7 @@ public class Server implements DatabaseListener
             while(true)
             {
                 Socket socket = serverSocket.accept();
-                ClientHandler temp = new ClientHandler(socket, this);
+                ClientHandler temp = new ClientHandler(socket, networkDatabase, this);
                 Thread clientHandlerThread = new Thread(temp);
                 clientHandlerThread.setDaemon(true);
                 clientHandlerThread.start();
@@ -52,25 +52,6 @@ public class Server implements DatabaseListener
             e.printStackTrace();
         }
 
-    }
-
-    public static synchronized void addNetwork(Network network)
-    {
-        networkDatabase.insertNetwork(network);
-    }
-
-    public static synchronized void modifyNetwork(Network network)
-    {
-        networkDatabase.updateNetwork(network);
-    }
-
-    public static synchronized void deleteNetwork(int networkID)
-    {
-        networkDatabase.deleteNetwork(networkID);
-    }
-    public static synchronized ArrayList<Network> getNetworks()
-    {
-        return networkDatabase.getData();
     }
 
     @Override
