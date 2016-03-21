@@ -9,18 +9,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Created by T on 06/03/2016.
+ * Created by Talal Mahmood on 06/03/2016.
+ * SID 5296251
+ * Coventry University
  */
+
 public class NetworkDatabase extends Database
 {
-    String createTableStatement = "CREATE TABLE Networks(" +
-                                  "networkID INT NOT NULL PRIMARY KEY, " +
-                                  "numberOfNodes INT NOT NULL, " +
-                                  "numberOfHubs INT NOT NULL," +
-                                  "numberOfSwitches INT NOT NULL, " +
-                                  "topologyStructure VARCHAR(256), " +
-                                  "countryOfOrigin VARCHAR(256), " +
-                                  "currentStatus VARCHAR(256))";
+    private String createTableStatement = "CREATE TABLE Networks(" +
+                                          "networkID INT NOT NULL PRIMARY KEY, " +
+                                          "numberOfNodes INT NOT NULL, " +
+                                          "numberOfHubs INT NOT NULL," +
+                                          "numberOfSwitches INT NOT NULL, " +
+                                          "topologyStructure VARCHAR(256), " +
+                                          "countryOfOrigin VARCHAR(256), " +
+                                          "currentStatus VARCHAR(256))";
     private Connection databaseConnection;
     private PreparedStatement insertData;
     private PreparedStatement updateData;
@@ -29,6 +32,9 @@ public class NetworkDatabase extends Database
     private PreparedStatement getNetworkTable;
     private ArrayList<Network> tableData;
 
+    /**
+     * Constructor that connects to the database and prepares the SQL statements.
+     */
     public NetworkDatabase()
     {
         tableData = new ArrayList<>();
@@ -52,6 +58,11 @@ public class NetworkDatabase extends Database
         }
     }
 
+    /**
+     * Method that inserts a Network object into the database
+     * @param network to be inserted
+     * @return true if the operation was successful
+     */
     public synchronized boolean insertNetwork(Network network)
     {
         if(databaseConnection != null)
@@ -79,15 +90,23 @@ public class NetworkDatabase extends Database
         return false;
     }
 
+    /**
+     * Method that deletes a Network from the database
+     * @param networkID the ID of the network to be deleted
+     * @return true if the operation was successful
+     */
     public synchronized boolean deleteNetwork(int networkID)
     {
         if(databaseConnection != null)
         {
             try
             {
-                deleteData.setInt(1, networkID);
-                deleteData.executeUpdate();
-                return true;
+                if(doesExist(networkID))
+                {
+                    deleteData.setInt(1, networkID);
+                    deleteData.executeUpdate();
+                    return true;
+                }
             }
             catch (SQLException e)
             {
@@ -97,6 +116,11 @@ public class NetworkDatabase extends Database
         return false;
     }
 
+    /**
+     * Method that edits a Network in the database
+     * @param network network to be modified
+     * @return true if the operation was successful
+     */
     public synchronized boolean updateNetwork(Network network)
     {
         if(databaseConnection != null)
@@ -124,6 +148,12 @@ public class NetworkDatabase extends Database
         }
         return false;
     }
+
+    /**
+     * Method to check if a Network exists
+     * @param networkID the ID of the network to check
+     * @return true if the network exists
+     */
     public synchronized boolean doesExist(int networkID)
     {
         if(databaseConnection != null)
@@ -141,6 +171,11 @@ public class NetworkDatabase extends Database
         }
         return false;
     }
+
+    /**
+     * Method to get all records in the data
+     * @return ArrayList of Networks
+     */
     public synchronized ArrayList<Network> getData()
     {
         tableData.clear();

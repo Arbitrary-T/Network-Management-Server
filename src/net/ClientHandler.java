@@ -9,8 +9,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 /**
- * Created by T on 07/03/2016.
+ * Created by Talal Mahmood on 07/03/2016.
+ * SID 5296251
+ * Coventry University
  */
+
 public class ClientHandler implements Runnable
 {
     private Socket socket;
@@ -19,6 +22,12 @@ public class ClientHandler implements Runnable
     private ObjectInputStream objectInputStream;
     private NetworkDatabase networkDatabase;
 
+    /**
+     * Constructor to connect to socket, get access to database and activate agent.
+     * @param socket
+     * @param networkDatabase
+     * @param mainAgent
+     */
     public ClientHandler(Socket socket, NetworkDatabase networkDatabase, DatabaseListener mainAgent)
     {
         this.socket = socket;
@@ -26,6 +35,9 @@ public class ClientHandler implements Runnable
         this.agent = mainAgent;
     }
 
+    /**
+     * run method that keeps on listening for commands from the server and handle command.
+     */
     @Override
     public void run()
     {
@@ -80,6 +92,9 @@ public class ClientHandler implements Runnable
         }
     }
 
+    /**
+     * Invoked when the database is updated, sends updated database to client
+     */
     public void databaseUpdate()
     {
         try

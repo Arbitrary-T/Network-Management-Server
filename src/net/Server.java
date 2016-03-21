@@ -1,23 +1,28 @@
 package net;
 
 import db.NetworkDatabase;
-import models.Network;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * Created by T on 06/03/2016.
+ * Created by Talal Mahmood on 06/03/2016.
+ * SID 5296251
+ * Coventry University
  */
+
 public class Server implements DatabaseListener
 {
     private LinkedList<ClientHandler> clientHandlerLinkedList;
     private NetworkDatabase networkDatabase;
 
+    /**
+     * constructor that configures the socket to listen too.
+     * @param serverSocket socket to listen too
+     */
     public Server(int serverSocket)
     {
         clientHandlerLinkedList = new LinkedList<>();
@@ -32,6 +37,11 @@ public class Server implements DatabaseListener
         }
     }
 
+    /**
+     * while loop to listen to connections and instantiate a new handler for each client (multi threaded)
+     * @param serverSocketInt socket to listen too
+     * @throws Exception
+     */
     public void run(int serverSocketInt) throws Exception
     {
         ServerSocket serverSocket = new ServerSocket(serverSocketInt);
@@ -54,6 +64,10 @@ public class Server implements DatabaseListener
 
     }
 
+    /**
+     * Invoked when the database is updated, loops through the client handlers and notifies of an update to the database
+     * the client handler would then send an updated database to the connected clients. (auto refresh)
+     */
     @Override
     public void notifyUpdate()
     {

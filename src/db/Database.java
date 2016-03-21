@@ -7,12 +7,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Created by T on 27/01/2016.
+ * Created by Talal Mahmood on 27/01/2016.
+ * SID 5296251
+ * Coventry University
  */
+
 public abstract class Database
 {
-    Connection databaseConnection;
+    private Connection databaseConnection;
 
+    /**
+     * method to be called by all databases, connects to a database, if it doesn't exist creates one.
+     * @param database the name of the database to connect to or create
+     * @param createTableStatement the table to create if it does not exist
+     * @return
+     */
     public Connection loadDatabase(String database, String createTableStatement)
     {
         File databaseFile = new File(database);
