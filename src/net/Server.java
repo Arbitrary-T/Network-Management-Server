@@ -42,7 +42,7 @@ public class Server implements DatabaseListener
      * @param serverSocketInt socket to listen too
      * @throws Exception
      */
-    public void run(int serverSocketInt) throws Exception
+    private void run(int serverSocketInt) throws Exception
     {
         ServerSocket serverSocket = new ServerSocket(serverSocketInt);
         try
@@ -61,7 +61,6 @@ public class Server implements DatabaseListener
         {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -74,13 +73,17 @@ public class Server implements DatabaseListener
         for(Iterator<ClientHandler> clientHandlerIterator = clientHandlerLinkedList.iterator(); clientHandlerIterator.hasNext();)
         {
             ClientHandler clientHandler = clientHandlerIterator.next();
-            if(!clientHandler.getSocket().isClosed())
+            if(clientHandler.getSocket() != null)
             {
-                clientHandler.databaseUpdate();
-            }
-            else
-            {
-                clientHandlerIterator.remove();
+                if(!clientHandler.getSocket().isClosed())
+                {
+                    clientHandler.databaseUpdate();
+                }
+                else
+                {
+                    clientHandler.keepAlive(false);
+                    clientHandlerIterator.remove();
+                }
             }
         }
     }

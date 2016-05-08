@@ -9,9 +9,8 @@ import java.io.Serializable;
  */
 
 public class Network implements Serializable
-
 {
-    private static final long serialVersionUID = 50L;
+    private static final long SERIAL_VERSION_UID = 50L;
     private int id;
     private int nodes;
     private int hubs;
@@ -36,7 +35,7 @@ public class Network implements Serializable
         return currentStatus;
     }
 
-    public void setCurrentStatus(String currentStatus)
+    private void setCurrentStatus(String currentStatus)
     {
         this.currentStatus = currentStatus;
     }
@@ -46,8 +45,7 @@ public class Network implements Serializable
         return countryOfOrigin;
     }
 
-    public void setCountryOfOrigin(String countryOfOrigin)
-    {
+    private void setCountryOfOrigin(String countryOfOrigin) {
         this.countryOfOrigin = countryOfOrigin;
     }
 
@@ -56,7 +54,7 @@ public class Network implements Serializable
         return topologyStructure;
     }
 
-    public void setTopologyStructure(String topologyStructure)
+    private void setTopologyStructure(String topologyStructure)
     {
         this.topologyStructure = topologyStructure;
     }
@@ -66,17 +64,16 @@ public class Network implements Serializable
         return switches;
     }
 
-    public void setSwitches(int switches)
+    private void setSwitches(int switches)
     {
         this.switches = switches;
     }
 
-    public int getHubs()
-    {
+    public int getHubs() {
         return hubs;
     }
 
-    public void setHubs(int hubs)
+    private void setHubs(int hubs)
     {
         this.hubs = hubs;
     }
@@ -86,7 +83,7 @@ public class Network implements Serializable
         return nodes;
     }
 
-    public void setNodes(int nodes)
+    private void setNodes(int nodes)
     {
         this.nodes = nodes;
     }
@@ -96,7 +93,7 @@ public class Network implements Serializable
         return id;
     }
 
-    public void setId(int id)
+    private void setId(int id)
     {
         this.id = id;
     }

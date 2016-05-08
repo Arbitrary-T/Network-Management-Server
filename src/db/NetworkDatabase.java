@@ -154,7 +154,7 @@ public class NetworkDatabase extends Database
      * @param networkID the ID of the network to check
      * @return true if the network exists
      */
-    public synchronized boolean doesExist(int networkID)
+    private synchronized boolean doesExist(int networkID)
     {
         if(databaseConnection != null)
         {
@@ -188,6 +188,7 @@ public class NetworkDatabase extends Database
                 {
                     tableData.add(new Network(resultSet.getInt(1), resultSet.getInt(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getString(5), resultSet.getString(6), resultSet.getString(7)));
                 }
+                resultSet.close();
             }
         }
         catch(SQLException e)

@@ -21,7 +21,7 @@ public class ClientHandler implements Runnable
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
     private NetworkDatabase networkDatabase;
-
+    private boolean stayAlive = true;
     /**
      * Constructor to connect to socket, get access to database and activate agent.
      * @param socket
@@ -46,7 +46,7 @@ public class ClientHandler implements Runnable
             String command;
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
-            while(true)
+            while(stayAlive)
             {
                 command = (String) objectInputStream.readObject();
                 switch (command)
@@ -69,6 +69,11 @@ public class ClientHandler implements Runnable
                     case "Refresh":
                         objectInputStream.readObject();
                         databaseUpdate();
+                        break;
+                    case "Shutdown":
+                        objectInputStream.readObject();
+                        socket.close();
+                        agent.notifyUpdate();
                         break;
                 }
             }
@@ -122,10 +127,12 @@ public class ClientHandler implements Runnable
             io.printStackTrace();
         }
     }
-
+    public void keepAlive(boolean stayAlive)
+    {
+        this.stayAlive = stayAlive;
+    }
     public Socket getSocket()
     {
         return this.socket;
     }
-
 }
